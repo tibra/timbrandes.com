@@ -3,31 +3,71 @@
  */
 .site-header {
   min-height: $spacing-unit * 1.865;
+  display: flex;
+  max-width: -webkit-calc(#{$content-width} - (#{$spacing-unit} * 2));
+  max-width:         calc(#{$content-width} - (#{$spacing-unit} * 2));
+  padding-right: $spacing-unit;
+  padding-left: $spacing-unit;
+  margin-right: auto;
+  margin-left: auto;
+  @include media-query($on-laptop) {
+    max-width: -webkit-calc(#{$content-width} - (#{$spacing-unit}));
+    max-width:         calc(#{$content-width} - (#{$spacing-unit}));
+    padding-right: $spacing-unit / 2;
+    padding-left: $spacing-unit / 2;
+  }
+  flex-wrap: wrap;
 
   // Positioning context for the mobile navigation icon
   position: relative;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
-.site-title {
-  @include relative-font-size(1.625);
-  font-weight: 300;
-  line-height: $base-line-height * $base-font-size * 2.25;
-  letter-spacing: -1px;
-  margin-bottom: 0;
-  float: left;
+.profile-wrapper {
+  flex: calc(80%);
+  border: 5px solid white;
+  display: block;
+  @include relative-font-size(0.8);
+  color: $grey-color;
+  .site-title {
+    @include relative-font-size(1.625);
+    font-weight: 300;
+    line-height: $base-line-height * $base-font-size * 2.25;
+    margin-bottom: 0;
+    color: $grey-color;
+    display: block;
 
-  &,
-  &:visited {
-    color: $grey-color-dark;
+    &,
+    &:visited {
+      color: $grey-color-dark;
+    }
+}
+}
+
+.profile-image {
+  margin-top: 10px;
+  text-align: left;
+  flex: calc(20%);
+  img {
+    border: 1px solid $grey-color-light;
+    padding: 4px;
+    border-radius: 100px;
   }
 }
+
+* {
+  box-sizing: border-box;
+}
+
+
 
 .site-nav {
   float: right;
   line-height: $base-line-height * $base-font-size * 2.25;
 
   .nav-trigger {
-      display: none;
+    display: none;
   }
 
   .menu-icon {
@@ -35,6 +75,7 @@
   }
 
   .page-link {
+    @include relative-font-size(0.8);
     color: $text-color;
     line-height: $base-line-height;
 
@@ -192,6 +233,25 @@
 
     @include media-query($on-laptop) {
       @include relative-font-size(1.125);
+    }
+  }
+}
+
+.site-footer {
+  text-align: right;
+  ul {
+    list-style-position: inside;
+    list-style-type: none;
+    padding: 0;
+    li {
+      padding: 0;
+      a.page-link {
+        @include relative-font-size(0.8);
+        color: $grey-color-light;
+        &:hover {
+          color: $grey-color-dark;
+        }
+      }
     }
   }
 }

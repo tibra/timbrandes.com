@@ -181,26 +181,6 @@ pre {
   clear: both;
 }
 
-
-
-/**
- * Icons
- */
-.icon > svg {
-  display: inline-block;
-  vertical-align: middle;
-
-  path {
-    fill: $grey-color;
-  }
-}
-
-.social-media-list {
-  .icon {
-    padding-right: 5px;
-  }
-
-  li + li {
-    padding-top: 5px;
-  }
+.rss-subscribe {
+  @include relative-font-size(0.8);
 }
