@@ -9,7 +9,7 @@ layout: default
   <ul class="post-list">
     {% for post in site.posts %}
       <li>
-        <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+        <a class="post-link" href="{{ post.url | relative_url }}"><span class="cat-label">{{ post.categories.first }}</span>{{ post.title | escape }}</a>
       </li>
     {% endfor %}
   </ul>
