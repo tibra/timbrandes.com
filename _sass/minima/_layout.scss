@@ -177,6 +177,9 @@
 
   > li {
     margin-bottom: 0.5em;
+    a {
+      color: $brand-color;
+    }
   }
 }
 
@@ -256,17 +259,15 @@
   }
 }
 
-a
-  span.cat-label {
-    background-color: $grey-color-light;
-    padding: 8px;
-    margin-right: 10px;
-    @include relative-font-size(0.7);
-    width: 60px;
-    font-weight: bold;
-    text-align: center;
-    display: inline-block;
-    text-transform: uppercase;
-    color: $grey-color;
-  }
-
+a > span.cat-label {
+  background-color: $grey-color-light;
+  padding: 8px;
+  margin-right: 10px;
+  @include relative-font-size(0.7);
+  width: 60px;
+  font-weight: bold;
+  text-align: center;
+  display: inline-block;
+  text-transform: uppercase;
+  color: $grey-color;
+}

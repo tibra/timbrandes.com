@@ -4,6 +4,7 @@
     {% assign default_paths = site.pages | map: "path" %}
     {% assign page_paths = site.header_pages | default: default_paths %}
     <ul>
+      <li><a class="page-link" href="{{ "/" | relative_url }}">Home</a></li>
       <li><a class="page-link" href="{{ "/feed.xml" | relative_url }}">RSS-Feed</a></li>
       {% for path in page_paths %}
         {% assign my_page = site.pages | where: "path", path | first %}
@@ -13,4 +14,18 @@
       {% endfor %}
     </ul>
   </div>
-</header>
+</footer>
+
+<script>
+  var _paq = _paq || [];
+  _paq.push(["trackPageView"]);
+  _paq.push(["enableLinkTracking"]);
+
+  (function() {
+  var u=(("https:" == document.location.protocol) ? "https" : "http") + "://tracking.zinkler-brandes.com/";
+  _paq.push(["setTrackerUrl", u+"piwik.php"]);
+  _paq.push(["setSiteId", "11"]);
+  var d=document, g=d.createElement("script"), s=d.getElementsByTagName("script")[0]; g.type="text/javascript";
+  g.defer=true; g.async=true; g.src=u+"piwik.js"; s.parentNode.insertBefore(g,s);
+  })();
+</script>
