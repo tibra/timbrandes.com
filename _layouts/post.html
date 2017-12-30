@@ -21,4 +21,8 @@ layout: default
   {% if site.disqus.shortname %}
     {% include disqus_comments.html %}
   {% endif %}
+
+  {% if page.comments %}
+    {% include disqus_comments.html %}
+  {% endif %}
 </article>
