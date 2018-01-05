@@ -3,6 +3,12 @@ GEM
   specs:
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
+    capistrano (2.15.9)
+      highline
+      net-scp (>= 1.0.0)
+      net-sftp (>= 2.0.0)
+      net-ssh (>= 2.0.14)
+      net-ssh-gateway (>= 1.1.0)
     colorator (1.1.0)
     em-websocket (0.5.1)
       eventmachine (>= 0.12.9)
@@ -10,6 +16,7 @@ GEM
     eventmachine (1.2.5)
     ffi (1.9.18)
     forwardable-extended (2.6.0)
+    highline (1.7.10)
     http_parser.rb (0.6.0)
     jekyll (3.6.2)
       addressable (~> 2.4)
@@ -38,6 +45,13 @@ GEM
       rb-inotify (~> 0.9, >= 0.9.7)
       ruby_dep (~> 1.2)
     mercenary (0.3.6)
+    net-scp (1.2.1)
+      net-ssh (>= 2.6.5)
+    net-sftp (2.1.2)
+      net-ssh (>= 2.6.5)
+    net-ssh (4.2.0)
+    net-ssh-gateway (2.0.0)
+      net-ssh (>= 4.0.0)
     pathutil (0.16.1)
       forwardable-extended (~> 2.6)
     public_suffix (3.0.1)
@@ -46,6 +60,8 @@ GEM
       ffi (>= 0.5.0, < 2)
     rouge (2.2.1)
     ruby_dep (1.5.0)
+    rvm-capistrano (1.5.6)
+      capistrano (~> 2.15.4)
     safe_yaml (1.0.4)
     sass (3.5.4)
       sass-listen (~> 4.0.0)
@@ -57,9 +73,11 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  capistrano
   jekyll (~> 3.6.2)
   jekyll-feed (~> 0.6)
   jekyll-livereload
+  rvm-capistrano
 
 BUNDLED WITH
    1.13.6
