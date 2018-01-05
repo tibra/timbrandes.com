@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "How to write your Thesis in LaTeX with Scrivener 2, MultiMarkdown 3 and BibDesk"
-date:   2014-04-08 23:50:00 +0100
+date:   2012-02-28 23:50:00 +0100
 categories: guide
 comments: true
 ---
