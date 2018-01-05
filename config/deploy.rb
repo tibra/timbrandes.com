@@ -5,7 +5,7 @@ require "rvm/capistrano"
 set :application, "timbrandes"
 set :domain, "84.200.65.138"
 set :use_sudo, false
-set :rvm_ruby_string, "ruby-2.2.1@global"
+set :rvm_ruby_string, "ruby-2.3.1"
 set :rvm_type, :user
 set :rvm_install_with_sudo, false
 set :scm, :git
