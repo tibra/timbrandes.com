@@ -2,7 +2,7 @@
 layout: post
 title: "Optimize BibDesk, Multimarkdown and Scrivener for a nice scientific bibliography and citation workflow"
 description: "Multimarkdown (MMD) is great for writing structured text without much syntactical noise. This article shows how BibDesk can be tweaked to fit well into a MMD workflow."
-date:   2014-04-09 07:00:00 +0100
+date:   2014-04-08 07:00:00 +0100
 categories: guide
 comments: true
 ---

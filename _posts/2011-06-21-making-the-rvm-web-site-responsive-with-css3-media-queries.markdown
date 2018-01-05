@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Making the RVM web site responsive with CSS3 media queries"
-date:   2011-06-22 00:38:00 +0100
+date:   2011-06-21 00:38:00 +0100
 categories: guide
 comments: true
 ---
