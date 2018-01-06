@@ -4,7 +4,7 @@ title: "Making the RVM web site responsive with CSS3 media queries"
 date:   2011-06-21 00:38:00 +0100
 categories: guide
 comments: true
-old_disqus_id: 623303685
+old_disqus_id: 2011-06-2100:38
 ---
 
 So, you might have heard of this shiny new book by [Ethan Marcotte][1] called [Responsive Web Design][2]. The basic idea is to make one web site and let it respond differently to the screen size of the user. We use three ingredients to do so

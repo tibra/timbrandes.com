@@ -4,7 +4,7 @@ title: "How to write your Thesis in LaTeX with Scrivener 2, MultiMarkdown 3 and 
 date:   2012-02-28 23:50:00 +0100
 categories: guide
 comments: true
-old_disqus_id: 622269769
+old_disqus_id: 2012-02-2823:50
 ---
 
 ## The pros and cons of LaTeX

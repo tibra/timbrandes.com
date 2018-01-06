@@ -5,7 +5,7 @@ description: "Multimarkdown (MMD) is great for writing structured text without m
 date:   2014-04-08 07:00:00 +0100
 categories: guide
 comments: true
-old_disqus_id: 2594541569
+old_disqus_id: 2014-04-0907:00
 ---
 
 To me, writing academic papers directly in LaTeX feels like I develop a software program. I have a hard time bringing my ideas to understandable sentences when I see so many brackets and backslashes. Multimarkdown (MMD) is a good combination of both worlds, content can be written without much syntactical noise and there is still structure. With the help of Scrivener, the workflow and organization of the MMD files becomes comfortable. Writing academic content, there is actually no excuse not to use a bibliography tool. Personally, I like BibDesk. It is open source, has a clean user interface and just enough options to categorize the material without being to overloaded. However, BibDesk was designed to work well with LaTeX. I tweaked BibDesk to fit into the MMD workflow.
