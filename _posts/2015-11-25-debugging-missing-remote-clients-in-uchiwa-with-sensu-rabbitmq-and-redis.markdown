@@ -4,6 +4,7 @@ title: "Debugging missing remote clients in Uchiwa with Sensu, RabbitMQ and Redi
 date:   2015-11-25 10:20:00 +0100
 categories: guide
 comments: true
+old_disqus_id: 4349164631
 ---
 
 
