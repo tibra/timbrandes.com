@@ -3,7 +3,7 @@ layout: post
 title: "Amateurs demand – Professionals require."
 date:   2019-02-14 13:37:00 +0100
 categories: essay
-comments: true
+comments: false
 ---
 
 Sometimes it’s me who demands, sometimes it’s a client or a contractor. We demand a new feature to be shipped on a specific date, a contract to be written in a certain way or a family member to perform a task for us. I’ve picked up the saying “amateurs demand – professionals require” some years ago and I often refer to it when I encounter a personal or business confrontation. Demanding instantly introduces hierachy, like the king who demands of his subordinates or the principal of his agent. 
