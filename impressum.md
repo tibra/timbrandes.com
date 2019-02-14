@@ -5,8 +5,8 @@ permalink: /impressum/
 ---
 
 Tim Brandes  
-c/o Zinkler & Brandes GmbH
-Kopernikusstraße 14
+c/o Zinkler & Brandes GmbH  
+Kopernikusstraße 14  
 30167 Hannover
 
 Feel free to contact me by email “mail at timbrandes dot de“.
@@ -26,8 +26,7 @@ Feel free to contact me by email “mail at timbrandes dot de“.
 <p class="p3"><span class="s1"><b>Name und Kontaktdaten des für die Verarbeitung Verantwortlichen</b></span></p>
 <p class="p3"><span class="s1">Diese Datenschutz-Information gilt für die Datenverarbeitung durch:</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p3"><span class="s1">Tim Brandes, Wedestr. 8, 30163 Hannover<br>
-Telefon: 0511 132 236 62<br>
+<p class="p3"><span class="s1">Tim Brandes, c/o Zinkler & Brandes GmbH, Kopernikusstraße 14, 30167 Hannover<br>
 E-Mail: mail [at] timbrandes de <br>
 </span></p>
 <p class="p3"><span class="s1"><b>Personenbezogene Daten</b></span></p>
