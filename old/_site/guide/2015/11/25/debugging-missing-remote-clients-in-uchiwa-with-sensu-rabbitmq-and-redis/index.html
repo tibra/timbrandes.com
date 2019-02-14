@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Debugging missing remote clients in Uchiwa with Sensu, RabbitMQ and Redis</title>
+  <meta name="description" content="The 10 hours bug hunt because of a missing comma aka understand the system to debug your configuration">
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="/guide/2015/11/25/debugging-missing-remote-clients-in-uchiwa-with-sensu-rabbitmq-and-redis/">
+  <link rel="alternate" type="application/rss+xml" title="Tim Brandes" href="/feed.xml">
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+
+  <div class="profile-image">
+    <a class="site-title" href="/">
+      <img src="/assets/profile_timbrandes.jpg"/>
+    </a>
+  </div>
+  <div class="profile-wrapper">
+    <a class="site-title" href="/">Tim Brandes</a>
+    A personal collection of essays and technical programming guides. I co-run my software company Zinkler &amp; Brandes and coach young soccer goalkeepers in Hannover, Germany.
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Debugging missing remote clients in Uchiwa with Sensu, RabbitMQ and Redis</h1>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <h2 id="the-10-hours-bug-hunt-because-of-a-missing-comma-aka-understand-the-system-to-debug-your-configuration">The 10 hours bug hunt because of a missing comma aka understand the system to debug your configuration</h2>
+
+<p>It all happend once my sensu-server was all set up and functioning well. The local sensu-client shows up in a dashboard and I moved on to configure the first remote client. So I’ve closely followed (in retrospect multiple times) the documentation on how to install and configure the sensu-client. I’ve self-signed the SSL certificates on the sensu-server, distributed the client.key and client.pem files to the server and even managed to install the client directly with the <a href="https://github.com/sensu/sensu-chef">sensu-chef Cookbook</a>. Then, I restarted the client and looked at the Uchiwa Dashboard on the server: nothing except my local client. I’ve restarted all services on the server like api, server, uchiwa in case I had miss-interpreted how Sensu works and which philosophy it follows. Unfurtunately to the effect of: nothing. The remote just wouldn’t show up. So searching the Internet began and with it some suggestions which log files to consult for help.</p>
+
+<blockquote>
+<a href="/assets/2015-11-sensu.png"><img src="/assets/2015-11-sensu.png" /></a>
+</blockquote>
+
+<h3 id="make-sure-ssl-is-setup-correctly">Make sure SSL is setup correctly</h3>
+<p>Since all my remote clients should talk to the sensu master server via SSL, I wanted to make sure this SSL connection with self-signed certs would work as I intented. It did not, instead, I was getting TLS handshake failures all over the RabbitMQ logs. By the way, each sensu-client has a config hash that specifies how it talks to RabbitMQ on the sensu master server. The remote client will talk directly to RabbitMQ, so this is probably a good first place to look for failures when a remote client doesn’t show up in Uchiwa. On the client, I was checking the sensu-client logs unter <em>/var/log/sensu/sensu-client.log</em>. It said something like <em>reconnecting to transport</em> and just hang there. The RabbitMQ logs on the server under <em>/var/log/rabbitmq/rabbit@sensu.log</em> displayed the TLS error.</p>
+
+<p>And this is how it looked like on the remote client</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="p">{</span><span class="s2">"timestamp"</span><span class="ss">:"2015-11-23T11:17:04.318751+0100"</span><span class="p">,</span><span class="s2">"level"</span><span class="ss">:"warn"</span><span class="p">,</span><span class="s2">"message"</span><span class="ss">:"loading config file"</span><span class="p">,</span><span class="s2">"file"</span><span class="ss">:"/etc/sensu/config.json"</span><span class="p">}</span>
+<span class="p">{</span><span class="s2">"timestamp"</span><span class="ss">:"2015-11-23T11:17:04.318847+0100"</span><span class="p">,</span><span class="s2">"level"</span><span class="ss">:"warn"</span><span class="p">,</span><span class="s2">"message"</span><span class="ss">:"loading config files from directory"</span><span class="p">,</span><span class="s2">"directory"</span><span class="ss">:"/etc/sensu/conf.d"</span><span class="p">}</span>
+<span class="p">{</span><span class="s2">"timestamp"</span><span class="ss">:"2015-11-23T11:17:04.321103+0100"</span><span class="p">,</span><span class="s2">"level"</span><span class="ss">:"warn"</span><span class="p">,</span><span class="s2">"message"</span><span class="ss">:"loading extension files from directory"</span><span class="p">,</span><span class="s2">"directory"</span><span class="ss">:"/etc/sensu/extensions"</span><span class="p">}</span>
+<span class="p">{</span><span class="s2">"timestamp"</span><span class="ss">:"2015-11-23T11:17:04.407738+0100"</span><span class="p">,</span><span class="s2">"level"</span><span class="ss">:"warn"</span><span class="p">,</span><span class="s2">"message"</span><span class="ss">:"reconnecting to transport"</span><span class="p">}</span>
+<span class="p">{</span><span class="s2">"timestamp"</span><span class="ss">:"2015-11-23T11:22:14.426687+0100"</span><span class="p">,</span><span class="s2">"level"</span><span class="ss">:"error"</span><span class="p">,</span><span class="s2">"message"</span><span class="ss">:"[amqp] Detected TCP connection failure"</span><span class="p">}</span></code></pre></figure>
+
+<p>Here is the RabbitMQ Server log</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="o">=</span><span class="no">INFO</span> <span class="no">REPORT</span><span class="o">====</span> <span class="mi">23</span><span class="o">-</span><span class="no">Nov</span><span class="o">-</span><span class="mi">2015</span><span class="o">::</span><span class="mi">11</span><span class="p">:</span><span class="mi">22</span><span class="p">:</span><span class="mi">33</span> <span class="o">===</span>
+<span class="n">accepting</span> <span class="no">AMQP</span> <span class="n">connection</span> <span class="o">&lt;</span><span class="mf">0.248</span><span class="o">.</span><span class="mi">0</span><span class="o">&gt;</span> <span class="p">(</span><span class="no">SENSU_REMOTE_CLIENT_IP</span><span class="p">:</span><span class="mi">33954</span> <span class="o">-&gt;</span> <span class="no">SENSU_SERVER_IP</span><span class="p">:</span><span class="mi">5671</span><span class="p">)</span>
+
+<span class="o">=</span><span class="no">ERROR</span> <span class="no">REPORT</span><span class="o">====</span> <span class="mi">23</span><span class="o">-</span><span class="no">Nov</span><span class="o">-</span><span class="mi">2015</span><span class="o">::</span><span class="mi">11</span><span class="p">:</span><span class="mi">22</span><span class="p">:</span><span class="mi">33</span> <span class="o">===</span>
+<span class="no">Error</span> <span class="n">on</span> <span class="no">AMQP</span> <span class="n">connection</span> <span class="o">&lt;</span><span class="mf">0.244</span><span class="o">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">:</span>
+<span class="p">{</span><span class="n">ssl_upgrade_error</span><span class="p">,{</span><span class="n">tls_alert</span><span class="p">,</span><span class="s2">"record overflow"</span><span class="p">}}</span></code></pre></figure>
+
+<p>So instead of cheating by telling RabbitMQ to not validate my certs, I’ve set them up from scratch again. This time it worked. So it was probably a mistake on my side where I falsly copied some files or forgot a step. It looked like this now:</p>
+
+<p>Sensu remote client log</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="p">{</span><span class="s2">"timestamp"</span><span class="ss">:"2015-11-23T13:47:09.656492+0100"</span><span class="p">,</span><span class="s2">"level"</span><span class="ss">:"info"</span><span class="p">,</span><span class="s2">"message"</span><span class="ss">:"reconnected to transport"</span><span class="p">}</span>
+<span class="p">{</span><span class="s2">"timestamp"</span><span class="ss">:"2015-11-23T13:47:10.657438+0100"</span><span class="p">,</span><span class="s2">"level"</span><span class="ss">:"debug"</span><span class="p">,</span><span class="s2">"message"</span><span class="ss">:"scheduling keepalives"</span><span class="p">}</span>
+<span class="p">{</span><span class="s2">"timestamp"</span><span class="ss">:"2015-11-23T13:47:10.657671+0100"</span><span class="p">,</span><span class="s2">"level"</span><span class="ss">:"debug"</span><span class="p">,</span><span class="s2">"message"</span><span class="ss">:"publishing keepalive"</span><span class="p">,</span><span class="s2">"payload"</span><span class="p">:{</span><span class="s2">"name"</span><span class="ss">:"errbit"</span><span class="p">,</span><span class="s2">"address"</span><span class="ss">:"localhost"</span><span class="p">,</span><span class="s2">"subscriptions"</span><span class="p">:[</span><span class="s2">"ALL"</span><span class="p">],</span><span class="s2">"version"</span><span class="ss">:"0.20.6"</span><span class="p">,</span><span class="s2">"timestamp"</span><span class="p">:</span><span class="mi">1448282830</span><span class="p">}}</span>
+<span class="p">{</span><span class="s2">"timestamp"</span><span class="ss">:"2015-11-23T13:47:10.658116+0100"</span><span class="p">,</span><span class="s2">"level"</span><span class="ss">:"debug"</span><span class="p">,</span><span class="s2">"message"</span><span class="ss">:"subscribing to client subscriptions"</span><span class="p">}</span>
+<span class="p">{</span><span class="s2">"timestamp"</span><span class="ss">:"2015-11-23T13:47:10.658210+0100"</span><span class="p">,</span><span class="s2">"level"</span><span class="ss">:"debug"</span><span class="p">,</span><span class="s2">"message"</span><span class="ss">:"subscribing to a subscription"</span><span class="p">,</span><span class="s2">"subscription"</span><span class="ss">:"ALL"</span><span class="p">}</span>
+<span class="p">{</span><span class="s2">"timestamp"</span><span class="ss">:"2015-11-23T13:47:10.658602+0100"</span><span class="p">,</span><span class="s2">"level"</span><span class="ss">:"debug"</span><span class="p">,</span><span class="s2">"message"</span><span class="ss">:"scheduling standalone checks"</span><span class="p">}</span>
+<span class="p">{</span><span class="s2">"timestamp"</span><span class="ss">:"2015-11-23T13:47:30.658960+0100"</span><span class="p">,</span><span class="s2">"level"</span><span class="ss">:"debug"</span><span class="p">,</span><span class="s2">"message"</span><span class="ss">:"publishing keepalive"</span><span class="p">,</span><span class="s2">"payload"</span><span class="p">:{</span><span class="s2">"name"</span><span class="ss">:"errbit"</span><span class="p">,</span><span class="s2">"address"</span><span class="ss">:"localhost"</span><span class="p">,</span><span class="s2">"subscriptions"</span><span class="p">:[</span><span class="s2">"ALL"</span><span class="p">],</span><span class="s2">"version"</span><span class="ss">:"0.20.6"</span><span class="p">,</span><span class="s2">"timestamp"</span><span class="p">:</span><span class="mi">1448282850</span><span class="p">}}</span></code></pre></figure>
+
+<p>RabbitMQ Server log</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="o">=</span><span class="no">INFO</span> <span class="no">REPORT</span><span class="o">====</span> <span class="mi">23</span><span class="o">-</span><span class="no">Nov</span><span class="o">-</span><span class="mi">2015</span><span class="o">::</span><span class="mi">13</span><span class="p">:</span><span class="mi">47</span><span class="p">:</span><span class="mi">08</span> <span class="o">===</span>
+<span class="n">accepting</span> <span class="no">AMQP</span> <span class="n">connection</span> <span class="o">&lt;</span><span class="mf">0.301</span><span class="o">.</span><span class="mi">0</span><span class="o">&gt;</span> <span class="p">(</span><span class="no">SENSU_REMOTE_CLIENT_IP</span><span class="p">:</span><span class="mi">34272</span> <span class="o">-&gt;</span> <span class="no">SENSU_MASTER_SERVER_IP</span><span class="p">:</span><span class="mi">5671</span><span class="p">)</span></code></pre></figure>
+
+<h2 id="however-the-sensu-remote-client-was-still-not-visible-in-uchiwa">However, the sensu remote client was still not visible in Uchiwa</h2>
+
+<p>So this is where things seemed so strange to me that after I’ve spent another 4 hours looking for clues on what was wrong with my setup, I’ve decided to check in to the #sensu IRC channel. <em>rob_</em> was kind and pointed me towards redis and run “redis-cli keys ‘*’” on the sensu server to check if redis was saving anything for that client. It did not, the name of name remote sensu client wasn’t in that list. Since a remote client talks to the Sensu API which again talks to Redis-Server (thank you <em>warmfusion</em> for helping get the connections right on IRC), something was probably wrong on the transport between the remote client and the sensu server. But this was OK, however, still no remote client in sensu. I’ve decided to head over to the sensu master server again. Then, in the sensu-server log it hit me:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="p">{</span><span class="s2">"timestamp"</span><span class="ss">:"2015-11-23T17:30:42.501290+0100"</span><span class="p">,</span><span class="s2">"level"</span><span class="ss">:"warn"</span><span class="p">,</span><span class="s2">"message"</span><span class="ss">:"config file must be valid json"</span><span class="p">,</span><span class="s2">"file"</span><span class="ss">:"/etc/sensu/config.json"</span><span class="p">,</span><span class="s2">"error"</span><span class="ss">:"parse error: after key and value, inside map, I expect ',' or '}'</span><span class="se">\n</span><span class="ss">          ,     </span><span class="se">\"</span><span class="ss">vhost</span><span class="se">\"</span><span class="ss">: </span><span class="se">\"</span><span class="ss">/sensu</span><span class="se">\"</span><span class="ss">     </span><span class="se">\"</span><span class="ss">ssl</span><span class="se">\"</span><span class="ss">: {       </span><span class="se">\"</span><span class="ss">cert_chain_file</span><span class="se">\"\n</span><span class="ss">                     (right here) ------^</span><span class="se">\n</span><span class="ss">"</span><span class="p">}</span></code></pre></figure>
+
+<p>Checking the <em>/etc/sensu/config.json</em>, I’ve added the missing comma, restarted the server via <em>service sensu-server restart</em> and everything was well and good. Still, I can’t believe why the system didn’t warn me about it, I’ve used the restarting service command a dozen times at least that day.  So my takeaway from this is: if anything seems strange, check ALL the log files from sensu, redis, rabbitmq and the sensu-client first and don’t from hypothesis about was might be wrong when the fault isn’t isolated well enough.</p>
+
+<p>The resulting diagramm shows not only the interplay of the sensu master server and the sensu remote clients but also the integration of configuration management (chef/puppet) and how to use the sensu community plugins in a DRY-way. I’ll might follow up with another post on that topic soon.</p>
+
+  </div>
+
+  <p class="post-meta">
+    <time datetime="2015-11-25T10:20:00+01:00" itemprop="datePublished">
+      
+      Nov 25, 2015
+    </time>
+  </p>
+
+  
+
+  
+    
+
+  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = '/guide/2015/11/25/debugging-missing-remote-clients-in-uchiwa-with-sensu-rabbitmq-and-redis/';
+      
+        this.page.identifier = '2015-11-2510:20';
+      
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://timbrandes.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+  
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer" role="footer">
+
+  <div class="wrapper">
+    
+    
+    <ul>
+      <li><a class="page-link" href="/">Home</a></li>
+      <li><a class="page-link" href="/feed.xml">RSS-Feed</a></li>
+      
+        
+        
+      
+        
+        
+        <li><a class="page-link" href="/impressum/">Impressum</a></li>
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+    </ul>
+  </div>
+</footer>
+
+<script>
+  var _paq = _paq || [];
+  _paq.push(["trackPageView"]);
+  _paq.push(["enableLinkTracking"]);
+
+  (function() {
+  var u=(("https:" == document.location.protocol) ? "https" : "http") + "://tracking.zinkler-brandes.com/";
+  _paq.push(["setTrackerUrl", u+"piwik.php"]);
+  _paq.push(["setSiteId", "11"]);
+  var d=document, g=d.createElement("script"), s=d.getElementsByTagName("script")[0]; g.type="text/javascript";
+  g.defer=true; g.async=true; g.src=u+"piwik.js"; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+
+
+  </body>
+
+</html>
