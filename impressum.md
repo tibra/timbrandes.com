@@ -5,8 +5,9 @@ permalink: /impressum/
 ---
 
 Tim Brandes  
-Wedelstr. 8  
-30163 Hannover
+c/o Zinkler & Brandes GmbH
+Kopernikusstraße 14
+30167 Hannover
 
 Feel free to contact me by email “mail at timbrandes dot de“.
 
