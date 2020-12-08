@@ -9,7 +9,7 @@ set :rvm_ruby_string, "ruby-2.3.1"
 set :rvm_type, :user
 set :rvm_install_with_sudo, false
 set :scm, :git
-set :repository, "git@gitlab.zinkler-brandes.com:tim.brandes/timbrandes.com.git"
+set :repository, "git@github.com:tibra/timbrandes.com.git"
 set :deploy_via, :remote_cache
 set :keep_releases, 3
 
